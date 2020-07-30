@@ -16,6 +16,15 @@ class Player(db.Model):
     def __repr__(self):
         return "<Player {}>".format(self.name)
 
+    def format(self):
+        return {
+            "name": self.name,
+            "gender": self.gender,
+            "jersey_number": self.jersey_number,
+            "position": self.position,
+            "team": self.team.name,
+        }
+
 
 class Team(db.Model):
     """Data model for registered teams"""
@@ -30,4 +39,13 @@ class Team(db.Model):
 
     def __repr__(self):
         return "<Team {}>".format(self.name)
+
+    def format(self):
+        return {
+            "name": self.name,
+            "location": self.location,
+            "division": self.division,
+            "level": self.level,
+            "roster": [player.name for player in self.players],
+        }
 
