@@ -8,22 +8,33 @@ class Player(db.Model):
     __tablename__ = "player"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), nullable=False)
-    gender = db.Column(db.String(6), nullable=True)
+    gender = db.Column(db.String(6), nullable=False)
     jersey_number = db.Column(db.Integer, nullable=False)
-    position = db.Column(db.String(7), nullable=True)
+    position = db.Column(db.String(7), nullable=False)
     team_id = db.Column(db.Integer, ForeignKey("team.id"))
 
     def __repr__(self):
         return "<Player {}>".format(self.name)
 
     def format(self):
-        return {
-            "name": self.name,
-            "gender": self.gender,
-            "jersey_number": self.jersey_number,
-            "position": self.position,
-            "team": self.team.name,
-        }
+        if self.team:
+            return {
+                "id": self.id,
+                "name": self.name,
+                "gender": self.gender,
+                "jersey_number": self.jersey_number,
+                "position": self.position,
+                "team": self.team.name,
+            }
+        else:
+            return {
+                "id": self.id,
+                "name": self.name,
+                "gender": self.gender,
+                "jersey_number": self.jersey_number,
+                "position": self.position,
+                "team": "",
+            }
 
 
 class Team(db.Model):
@@ -42,6 +53,7 @@ class Team(db.Model):
 
     def format(self):
         return {
+            "id": self.id,
             "name": self.name,
             "location": self.location,
             "division": self.division,
