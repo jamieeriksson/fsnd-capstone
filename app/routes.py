@@ -49,6 +49,59 @@ def players():
             abort(400)
 
 
+@app.route("/players/<int:player_id>", methods=["GET", "PATCH", "DELETE"])
+def player_details(player_id):
+    if request.method == "PATCH":
+        try:
+            player = Player.query.filter_by(id=player_id).one_or_none()
+            previous_player_info = player.format()
+            if player is None:
+                abort(400)
+
+            body = request.get_json()
+            player.name = body.get("name", "")
+            player.gender = body.get("gender", "")
+            player.jersey_number = body.get("jersey", 1)
+            player.position = body.get("position", "")
+            team_id = body.get("team_id", None)
+            player.team = (
+                Team.query.filter_by(id=team_id).one_or_none() if team_id else None
+            )
+
+            db.session.commit()
+
+            return jsonify(
+                {
+                    "success": True,
+                    "new_player_info": player.format(),
+                    "previous_player_info": previous_player_info,
+                }
+            )
+        except:
+            db.session.rollback()
+            abort(400)
+    elif request.method == "DELETE":
+        try:
+            player = Player.query.filter_by(id=player_id).one_or_none()
+            if player is None:
+                abort(400)
+
+            db.session.delete(player)
+            db.session.commit()
+
+            return jsonify({"success": True, "deleted": player_id})
+        except:
+            db.session.rollback()
+            abort(400)
+    elif request.method == "GET":
+        player = Player.query.filter_by(id=player_id).one_or_none()
+        if player is None:
+            abort(400)
+        return jsonify({"success": True, "player": player.format()})
+    else:
+        abort(400)
+
+
 @app.route("/teams", methods=["GET", "POST"])
 def teams():
     if request.method == "GET":
