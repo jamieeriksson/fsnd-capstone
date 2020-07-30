@@ -52,10 +52,33 @@ def players():
 @app.route("/teams", methods=["GET", "POST"])
 def teams():
     if request.method == "GET":
-        page = request.args.get("page", 1)
-        team_query = Team.query.paginate(page=page, per_page=ENTRIES_PER_PAGE)
-        teams_total = team_query.total
-        teams = [team.format() for team in team_query.items]
+        try:
+            page = request.args.get("page", 1)
+            team_query = Team.query.paginate(page=page, per_page=ENTRIES_PER_PAGE)
+            teams_total = team_query.total
+            teams = [team.format() for team in team_query.items]
 
-        return jsonify({"teams": teams_total, "teams": teams})
+            return jsonify({"teams": teams_total, "teams": teams})
+        except:
+            db.session.rollback()
+            abort(400)
+    else:
+        try:
+            body = request.get_json()
+            name = body.get("name", "")
+            location = body.get("location", "")
+            division = body.get("division", "")
+            level = body.get("level", "")
+
+            new_team = Team(
+                name=name, location=location, division=division, level=level,
+            )
+
+            db.session.add(new_team)
+            db.session.commit()
+
+            return jsonify({"success": True, "team": new_team.format()})
+        except:
+            db.session.rollback()
+            abort(400)
 
