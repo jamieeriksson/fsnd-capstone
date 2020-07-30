@@ -1,10 +1,10 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-
-# from flask import request, abort, jsonify
+from flask_migrate import Migrate
 from flask_cors import CORS
 
 db = SQLAlchemy()
+migrate = Migrate()
 
 
 def create_app():
@@ -15,12 +15,13 @@ def create_app():
     CORS(app)
 
     db.init_app(app)
+    migrate.init_app(app, db)
 
     with app.app_context():
         from . import routes  # Import routes
 
         # db.drop_all()
-        # db.create_all()  # Create sql tables for our data models
+        db.create_all()  # Create sql tables for our data models
 
         return app
 
