@@ -10,19 +10,19 @@ ENTRIES_PER_PAGE = 20
 @app.route("/players", methods=["GET", "POST"])
 def players():
     if request.method == "GET":
-        try:
-            page = request.args.get("page", 1)
-            player_query = Player.query.paginate(page=page, per_page=ENTRIES_PER_PAGE)
-            players_total = player_query.total
-            players = [player.format() for player in player_query.items]
+        page = request.args.get("page", 1)
+        player_query = Player.query.paginate(page=page, per_page=ENTRIES_PER_PAGE)
+        players_total = player_query.total
 
-            return jsonify(
-                {"success": True, "total_players": players_total, "players": players}
-            )
-        except:
-            db.session.rollback()
-            abort(400)
-    else:
+        if players_total == 0:
+            abort(404)
+
+        players = [player.format() for player in player_query.items]
+
+        return jsonify(
+            {"success": True, "total_players": players_total, "players": players}
+        )
+    elif request.method == "POST":
         try:
             body = request.get_json()
             name = body.get("name", "")
@@ -45,7 +45,9 @@ def players():
             return jsonify({"success": True, "player": new_player.format()})
         except:
             db.session.rollback()
-            abort(400)
+            abort(422)
+    else:
+        abort(405)
 
 
 @app.route("/players/<int:player_id>", methods=["GET", "PATCH", "DELETE"])
@@ -53,8 +55,10 @@ def player_details(player_id):
     if request.method == "PATCH":
         try:
             player = Player.query.filter_by(id=player_id).one_or_none()
+
             if player is None:
-                abort(400)
+                abort(404)
+
             previous_player_info = player.format()
 
             body = request.get_json()
@@ -78,42 +82,46 @@ def player_details(player_id):
             )
         except:
             db.session.rollback()
-            abort(400)
+            abort(422)
     elif request.method == "DELETE":
         try:
             player = Player.query.filter_by(id=player_id).one_or_none()
+
             if player is None:
-                abort(400)
+                abort(404)
 
             player.delete()
 
             return jsonify({"success": True, "deleted": player_id})
         except:
             db.session.rollback()
-            abort(400)
+            abort(422)
     elif request.method == "GET":
         player = Player.query.filter_by(id=player_id).one_or_none()
+
         if player is None:
-            abort(400)
+            abort(404)
+
         return jsonify({"success": True, "player": player.format()})
     else:
-        abort(400)
+        abort(405)
 
 
 @app.route("/teams", methods=["GET", "POST"])
 def teams():
     if request.method == "GET":
-        try:
-            page = request.args.get("page", 1)
-            team_query = Team.query.paginate(page=page, per_page=ENTRIES_PER_PAGE)
-            teams_total = team_query.total
-            teams = [team.format() for team in team_query.items]
+        page = request.args.get("page", 1)
+        team_query = Team.query.paginate(page=page, per_page=ENTRIES_PER_PAGE)
+        teams_total = team_query.total
 
-            return jsonify({"teams": teams_total, "teams": teams})
-        except:
-            db.session.rollback()
-            abort(400)
-    else:
+        if teams_total == 0:
+            abort(404)
+
+        teams = [team.format() for team in team_query.items]
+
+        return jsonify({"teams": teams_total, "teams": teams})
+
+    elif request.method == "POST":
         try:
             body = request.get_json()
             name = body.get("name", "")
@@ -130,7 +138,9 @@ def teams():
             return jsonify({"success": True, "team": new_team.format()})
         except:
             db.session.rollback()
-            abort(400)
+            abort(422)
+    else:
+        abort(405)
 
 
 @app.route("/teams/<int:team_id>", methods=["GET", "PATCH", "DELETE"])
@@ -138,8 +148,10 @@ def team_details(team_id):
     if request.method == "PATCH":
         try:
             team = Team.query.filter_by(id=team_id).one_or_none()
+
             if team is None:
-                abort(400)
+                abort(404)
+
             previous_team_info = team.format()
 
             body = request.get_json()
@@ -159,23 +171,61 @@ def team_details(team_id):
             )
         except:
             db.session.rollback()
-            abort(400)
+            abort(422)
     elif request.method == "DELETE":
         try:
             team = Team.query.filter_by(id=team_id).one_or_none()
+
             if team is None:
-                abort(400)
+                abort(404)
 
             team.delete()
 
             return jsonify({"success": True, "deleted": team_id})
         except:
             db.session.rollback()
-            abort(400)
+            abort(422)
     elif request.method == "GET":
         team = Team.query.filter_by(id=team_id).one_or_none()
+
         if team is None:
-            abort(400)
+            abort(404)
+
         return jsonify({"success": True, "team": team.format()})
     else:
-        abort(400)
+        abort(405)
+
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return (
+        jsonify({"success": False, "error": 404, "message": "resource not found"}),
+        404,
+    )
+
+
+@app.errorhandler(405)
+def page_not_found(e):
+    return (
+        jsonify({"success": False, "error": 405, "message": "method not allowed"}),
+        405,
+    )
+
+
+@app.errorhandler(422)
+def unprocessable(error):
+    return (jsonify({"success": False, "error": 422, "message": "unprocessable"}), 422)
+
+
+@app.errorhandler(AuthError)
+def not_found(AuthError):
+    return (
+        jsonify(
+            {
+                "success": False,
+                "error": AuthError.status_code,
+                "message": AuthError.error,
+            }
+        ),
+        AuthError.status_code,
+    )
