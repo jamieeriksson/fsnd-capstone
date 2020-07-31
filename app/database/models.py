@@ -36,6 +36,17 @@ class Player(db.Model):
                 "team": "",
             }
 
+    def insert(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def update(self):
+        db.session.commit()
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+
 
 class Team(db.Model):
     """Data model for registered teams"""
@@ -60,4 +71,15 @@ class Team(db.Model):
             "level": self.level,
             "roster": [player.name for player in self.players],
         }
+
+    def insert(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def update(self):
+        db.session.commit()
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
 

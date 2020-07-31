@@ -40,8 +40,7 @@ def players():
             )
             new_player.team = team
 
-            db.session.add(new_player)
-            db.session.commit()
+            new_player.insert()
 
             return jsonify({"success": True, "player": new_player.format()})
         except:
@@ -68,7 +67,7 @@ def player_details(player_id):
                 Team.query.filter_by(id=team_id).one_or_none() if team_id else None
             )
 
-            db.session.commit()
+            player.update()
 
             return jsonify(
                 {
@@ -86,8 +85,7 @@ def player_details(player_id):
             if player is None:
                 abort(400)
 
-            db.session.delete(player)
-            db.session.commit()
+            player.delete()
 
             return jsonify({"success": True, "deleted": player_id})
         except:
@@ -127,8 +125,7 @@ def teams():
                 name=name, location=location, division=division, level=level,
             )
 
-            db.session.add(new_team)
-            db.session.commit()
+            new_team.insert()
 
             return jsonify({"success": True, "team": new_team.format()})
         except:
@@ -151,7 +148,7 @@ def team_details(team_id):
             team.division = body.get("division", "")
             team.level = body.get("level", "")
 
-            db.session.commit()
+            team.update()
 
             return jsonify(
                 {
@@ -169,8 +166,7 @@ def team_details(team_id):
             if team is None:
                 abort(400)
 
-            db.session.delete(team)
-            db.session.commit()
+            team.delete()
 
             return jsonify({"success": True, "deleted": team_id})
         except:
