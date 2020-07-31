@@ -54,9 +54,9 @@ def player_details(player_id):
     if request.method == "PATCH":
         try:
             player = Player.query.filter_by(id=player_id).one_or_none()
-            previous_player_info = player.format()
             if player is None:
                 abort(400)
+            previous_player_info = player.format()
 
             body = request.get_json()
             player.name = body.get("name", "")
@@ -135,3 +135,51 @@ def teams():
             db.session.rollback()
             abort(400)
 
+
+@app.route("/teams/<int:team_id>", methods=["GET", "PATCH", "DELETE"])
+def team_details(team_id):
+    if request.method == "PATCH":
+        try:
+            team = Team.query.filter_by(id=team_id).one_or_none()
+            if team is None:
+                abort(400)
+            previous_team_info = team.format()
+
+            body = request.get_json()
+            team.name = body.get("name", "")
+            team.location = body.get("location", "")
+            team.division = body.get("division", "")
+            team.level = body.get("level", "")
+
+            db.session.commit()
+
+            return jsonify(
+                {
+                    "success": True,
+                    "new_team_info": team.format(),
+                    "previous_team_info": previous_team_info,
+                }
+            )
+        except:
+            db.session.rollback()
+            abort(400)
+    elif request.method == "DELETE":
+        try:
+            team = Team.query.filter_by(id=team_id).one_or_none()
+            if team is None:
+                abort(400)
+
+            db.session.delete(team)
+            db.session.commit()
+
+            return jsonify({"success": True, "deleted": team_id})
+        except:
+            db.session.rollback()
+            abort(400)
+    elif request.method == "GET":
+        team = Team.query.filter_by(id=team_id).one_or_none()
+        if team is None:
+            abort(400)
+        return jsonify({"success": True, "team": team.format()})
+    else:
+        abort(400)
