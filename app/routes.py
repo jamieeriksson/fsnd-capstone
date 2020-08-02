@@ -1,13 +1,15 @@
 from operator import pos
+import re
 from flask import request, jsonify, abort
 from datetime import datetime as dt
 from flask import current_app as app
 from .database.models import db, Player, Team
+from .auth.auth import AuthError, requires_auth
 
 ENTRIES_PER_PAGE = 20
 
 
-@app.route("/players", methods=["GET", "POST"])
+@app.route("/players", methods=["GET"])
 def players():
     if request.method == "GET":
         page = request.args.get("page", 1)
@@ -22,7 +24,14 @@ def players():
         return jsonify(
             {"success": True, "total_players": players_total, "players": players}
         )
-    elif request.method == "POST":
+    else:
+        abort(405)
+
+
+@app.route("/players", methods=["POST"])
+@requires_auth("post:players")
+def players():
+    if request.method == "POST":
         try:
             body = request.get_json()
             name = body.get("name", "")
@@ -50,8 +59,22 @@ def players():
         abort(405)
 
 
-@app.route("/players/<int:player_id>", methods=["GET", "PATCH", "DELETE"])
+@app.route("/players/<int:player_id>", methods=["GET"])
 def player_details(player_id):
+    if request.method == "GET":
+        player = Player.query.filter_by(id=player_id).one_or_none()
+
+        if player is None:
+            abort(404)
+
+        return jsonify({"success": True, "player": player.format()})
+    else:
+        abort(405)
+
+
+@app.route("/players/<int:player_id>", methods=["PATCH"])
+@requires_auth("patch:players")
+def update_player_details(player_id):
     if request.method == "PATCH":
         try:
             player = Player.query.filter_by(id=player_id).one_or_none()
@@ -83,7 +106,14 @@ def player_details(player_id):
         except:
             db.session.rollback()
             abort(422)
-    elif request.method == "DELETE":
+    else:
+        abort(405)
+
+
+@app.route("/players/<int:player_id>", methods=["DELETE"])
+@requires_auth("delete:players")
+def delete_player(player_id):
+    if request.method == "DELETE":
         try:
             player = Player.query.filter_by(id=player_id).one_or_none()
 
@@ -96,18 +126,11 @@ def player_details(player_id):
         except:
             db.session.rollback()
             abort(422)
-    elif request.method == "GET":
-        player = Player.query.filter_by(id=player_id).one_or_none()
-
-        if player is None:
-            abort(404)
-
-        return jsonify({"success": True, "player": player.format()})
     else:
         abort(405)
 
 
-@app.route("/teams", methods=["GET", "POST"])
+@app.route("/teams", methods=["GET"])
 def teams():
     if request.method == "GET":
         page = request.args.get("page", 1)
@@ -121,7 +144,14 @@ def teams():
 
         return jsonify({"teams": teams_total, "teams": teams})
 
-    elif request.method == "POST":
+    else:
+        abort(405)
+
+
+@app.route("/teams", methods=["POST"])
+@requires_auth("post:teams")
+def teams():
+    if request.method == "POST":
         try:
             body = request.get_json()
             name = body.get("name", "")
@@ -143,7 +173,21 @@ def teams():
         abort(405)
 
 
-@app.route("/teams/<int:team_id>", methods=["GET", "PATCH", "DELETE"])
+@app.route("/teams/<int:team_id>", methods=["GET"])
+def team_details(team_id):
+    if request.method == "GET":
+        team = Team.query.filter_by(id=team_id).one_or_none()
+
+        if team is None:
+            abort(404)
+
+        return jsonify({"success": True, "team": team.format()})
+    else:
+        abort(405)
+
+
+@app.route("/teams/<int:team_id>", methods=["PATCH"])
+@requires_auth("patch:teams")
 def team_details(team_id):
     if request.method == "PATCH":
         try:
@@ -172,7 +216,14 @@ def team_details(team_id):
         except:
             db.session.rollback()
             abort(422)
-    elif request.method == "DELETE":
+    else:
+        abort(405)
+
+
+@app.route("/teams/<int:team_id>", methods=["DELETE"])
+@requires_auth("delete:teams")
+def team_details(team_id):
+    if request.method == "DELETE":
         try:
             team = Team.query.filter_by(id=team_id).one_or_none()
 
@@ -185,13 +236,6 @@ def team_details(team_id):
         except:
             db.session.rollback()
             abort(422)
-    elif request.method == "GET":
-        team = Team.query.filter_by(id=team_id).one_or_none()
-
-        if team is None:
-            abort(404)
-
-        return jsonify({"success": True, "team": team.format()})
     else:
         abort(405)
 

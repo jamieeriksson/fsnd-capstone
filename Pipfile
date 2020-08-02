@@ -18,6 +18,7 @@ flask = "*"
 flask-sqlalchemy = "*"
 flask-wtf = "*"
 flask-cors = "*"
+python-jose = "*"
 
 [requires]
 python_version = "3.8"
