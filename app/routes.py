@@ -29,8 +29,8 @@ def players():
 
 
 @app.route("/players", methods=["POST"])
-@requires_auth("post:players")
-def players():
+@requires_auth("create:players")
+def new_player():
     if request.method == "POST":
         try:
             body = request.get_json()
@@ -73,7 +73,7 @@ def player_details(player_id):
 
 
 @app.route("/players/<int:player_id>", methods=["PATCH"])
-@requires_auth("patch:players")
+@requires_auth("update:players")
 def update_player_details(player_id):
     if request.method == "PATCH":
         try:
@@ -149,8 +149,8 @@ def teams():
 
 
 @app.route("/teams", methods=["POST"])
-@requires_auth("post:teams")
-def teams():
+@requires_auth("create:teams")
+def new_team():
     if request.method == "POST":
         try:
             body = request.get_json()
@@ -187,8 +187,8 @@ def team_details(team_id):
 
 
 @app.route("/teams/<int:team_id>", methods=["PATCH"])
-@requires_auth("patch:teams")
-def team_details(team_id):
+@requires_auth("update:teams")
+def update_team_details(team_id):
     if request.method == "PATCH":
         try:
             team = Team.query.filter_by(id=team_id).one_or_none()
@@ -222,7 +222,7 @@ def team_details(team_id):
 
 @app.route("/teams/<int:team_id>", methods=["DELETE"])
 @requires_auth("delete:teams")
-def team_details(team_id):
+def delete_team(team_id):
     if request.method == "DELETE":
         try:
             team = Team.query.filter_by(id=team_id).one_or_none()
