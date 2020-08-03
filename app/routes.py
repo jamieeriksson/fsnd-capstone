@@ -142,7 +142,7 @@ def teams():
 
         teams = [team.format() for team in team_query.items]
 
-        return jsonify({"teams": teams_total, "teams": teams})
+        return jsonify({"success": True, "total_teams": teams_total, "teams": teams})
 
     else:
         abort(405)
