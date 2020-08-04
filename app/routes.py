@@ -16,7 +16,7 @@ def players():
         player_query = Player.query.paginate(page=page, per_page=ENTRIES_PER_PAGE)
         players_total = player_query.total
 
-        if players_total == 0:
+        if players_total == 0 or player_query == 0:
             abort(404)
 
         players = [player.format() for player in player_query.items]
