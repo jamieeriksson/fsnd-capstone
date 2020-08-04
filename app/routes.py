@@ -1,5 +1,3 @@
-from operator import pos
-import re
 from flask import request, jsonify, abort
 from datetime import datetime as dt
 from flask import current_app as app
@@ -30,7 +28,7 @@ def players():
 
 @app.route("/players", methods=["POST"])
 @requires_auth("create:players")
-def new_player():
+def new_player(jwt):
     if request.method == "POST":
         try:
             body = request.get_json()
@@ -74,7 +72,7 @@ def player_details(player_id):
 
 @app.route("/players/<int:player_id>", methods=["PATCH"])
 @requires_auth("update:players")
-def update_player_details(player_id):
+def update_player_details(jwt, player_id):
     if request.method == "PATCH":
         try:
             player = Player.query.filter_by(id=player_id).one_or_none()
@@ -112,7 +110,7 @@ def update_player_details(player_id):
 
 @app.route("/players/<int:player_id>", methods=["DELETE"])
 @requires_auth("delete:players")
-def delete_player(player_id):
+def delete_player(jwt, player_id):
     if request.method == "DELETE":
         try:
             player = Player.query.filter_by(id=player_id).one_or_none()
@@ -150,7 +148,7 @@ def teams():
 
 @app.route("/teams", methods=["POST"])
 @requires_auth("create:teams")
-def new_team():
+def new_team(jwt):
     if request.method == "POST":
         try:
             body = request.get_json()
@@ -188,7 +186,7 @@ def team_details(team_id):
 
 @app.route("/teams/<int:team_id>", methods=["PATCH"])
 @requires_auth("update:teams")
-def update_team_details(team_id):
+def update_team_details(jwt, team_id):
     if request.method == "PATCH":
         try:
             team = Team.query.filter_by(id=team_id).one_or_none()
@@ -222,7 +220,7 @@ def update_team_details(team_id):
 
 @app.route("/teams/<int:team_id>", methods=["DELETE"])
 @requires_auth("delete:teams")
-def delete_team(team_id):
+def delete_team(jwt, team_id):
     if request.method == "DELETE":
         try:
             team = Team.query.filter_by(id=team_id).one_or_none()
