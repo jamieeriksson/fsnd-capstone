@@ -1,5 +1,20 @@
 from sqlalchemy.sql.schema import ForeignKey
-from .. import db
+from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
+
+db = SQLAlchemy()
+migrate = Migrate()
+
+
+def setup_db(app):
+    db.app = app
+    db.init_app(app)
+    migrate.init_app(app, db)
+
+
+def db_drop_and_create_all():
+    db.drop_all()
+    db.create_all()
 
 
 class Player(db.Model):

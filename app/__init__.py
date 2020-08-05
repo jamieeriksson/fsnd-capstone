@@ -1,27 +1,25 @@
+from app.database.models import db_drop_and_create_all
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
 from flask_cors import CORS
+from .database.models import db_drop_and_create_all, setup_db
+import os
 
-db = SQLAlchemy()
-migrate = Migrate()
 
-
-def create_app():
+def create_app(testing):
     # create and configure the app
     app = Flask(__name__, instance_relative_config=False)
     app.config.from_object("config.DevConfig")
 
-    CORS(app)
+    if testing:
+        app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_TEST_URI")
 
-    db.init_app(app)
-    migrate.init_app(app, db)
+    CORS(app)
+    setup_db(app)
 
     with app.app_context():
         from . import routes  # Import routes
 
-        # db.drop_all()
-        db.create_all()  # Create sql tables for our data models
+        db_drop_and_create_all()
 
         return app
 
