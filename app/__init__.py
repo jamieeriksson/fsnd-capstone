@@ -1,7 +1,7 @@
 from app.database.models import db_drop_and_create_all
 from flask import Flask
 from flask_cors import CORS
-from .database.models import db_drop_and_create_all, setup_db
+from .database.models import db_drop_and_create_all, setup_db, populate_db
 import os
 
 
@@ -20,6 +20,7 @@ def create_app(testing):
         from . import routes  # Import routes
 
         db_drop_and_create_all()
+        populate_db()
 
         return app
 

@@ -17,6 +17,35 @@ def db_drop_and_create_all():
     db.create_all()
 
 
+def populate_db():
+    womens_team = Team(
+        name="Whiplash",
+        location="Richardson, Texas",
+        division="Womens",
+        level="College",
+    )
+    mens_team = Team(
+        name="WOOF", location="Richardson, Texas", division="Open", level="College"
+    )
+    womens_team.insert()
+    mens_team.insert()
+
+    womens_player = Player(
+        name="Doe Johnson", gender="F", jersey_number=15, position="Hybrid"
+    )
+    mens_player = Player(
+        name="John Smith", gender="M", jersey_number=42, position="Handler"
+    )
+
+    womens_player.team = womens_team
+    mens_player.team = mens_team
+
+    womens_player.insert()
+    mens_player.insert()
+
+    db.session.close()
+
+
 class Player(db.Model):
     """Data model for individual players"""
 
