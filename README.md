@@ -30,13 +30,23 @@ This will install all of the required packages within the `Pipfile` file.
 
 - [jose](https://python-jose.readthedocs.io/en/latest/) JavaScript Object Signing and Encryption for JWTs. Useful for encoding, decoding, and verifying JWTS.
 
-#### Dotenv File and Variables
+#### Envrionment Variables
+
+##### Dotenv Database Variables
 
 The `config.py` file connects to a database through a `.env` file located in the `/backend` directory. Create the following two variables in order for the api to connect to your own database of choice:
 
 ```
 DATABASE_URI="postgresql://<user>:<password>@localhost:<port>/<database_name>"
 DATABASE_TEST_URI="postgresql://<user>:<password>@localhost:<port>/<test_database_name>"
+```
+
+##### Authorization setup.sh Variables
+
+For Udacity reviewers the Auth0 environment variables as well as authorization tokens for testing are located in the `setup.sh` file. To set these variables, move into the `/backend` directory and execute the following:
+
+```bash
+. setup.sh
 ```
 
 ## Running the server
@@ -338,7 +348,12 @@ https://dev-pfwmgsv1.us.auth0.com/logout
 
 ### Setting up Authorization Credentials for Testing
 
-You will need JWTs for an Admin user and a Team Manager user in order to run the unit tests. In the `test_credentials.txt` file there are JWTs for both an Admin and Team Manager users. Copy these variables into your `.env` file before running the test files.
+You will need JWTs for an Admin user and a Team Manager user in order to run the unit tests. These JWTs should have been exported as environment variables when you ran the `setup.sh` file. You can check if these variables set correctly by executing:
+
+```bash
+echo "$ADMIN_TOKEN"
+echo "$TEAM_MANAGER_TOKEN"
+```
 
 ### Running the Test Files
 

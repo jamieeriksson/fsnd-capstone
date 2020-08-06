@@ -1,6 +1,5 @@
 import unittest
 import json
-import os
 from os import getenv
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
@@ -16,13 +15,12 @@ class UltimatePlayersTestCase(unittest.TestCase):
 
         self.app = create_app(True)
 
-        self.team_manager_jwt = os.getenv("TEAM_MANAGER_TOKEN")
+        self.admin_jwt = getenv("ADMIN_TOKEN")
+        self.team_manager_jwt = getenv("TEAM_MANAGER_TOKEN")
         self.client = self.app.test_client
 
-        self.admin_headers = {"Authorization": f"Bearer {getenv('ADMIN_TOKEN', None)}"}
-        self.team_manager_headers = {
-            "Authorization": f"Bearer {getenv('TEAM_MANAGER_TOKEN', None)}"
-        }
+        self.admin_headers = {"Authorization": f"Bearer {self.admin_jwt}"}
+        self.team_manager_headers = {"Authorization": f"Bearer {self.team_manager_jwt}"}
 
         # Variables for player endpoint tests
         self.player_name = "Doe Johnson"
