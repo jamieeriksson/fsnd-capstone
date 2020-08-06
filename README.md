@@ -49,6 +49,11 @@ To run the server, execute:
 python wsgi.py
 ```
 
+## Live URL
+
+This API is deployed on Heroku and can be visited at:
+https://fsnd-capstone-ultimate-teams.herokuapp.com/
+
 ## Authorization
 
 To log in or create an account for this application you can visit:
