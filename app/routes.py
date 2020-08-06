@@ -7,6 +7,15 @@ from .auth.auth import AuthError, requires_auth
 ENTRIES_PER_PAGE = 20
 
 
+@app.route("/")
+def index():
+    return jsonify(
+        {
+            "message": "Visit the /players or /teams routes to see player and team details!"
+        }
+    )
+
+
 @app.route("/players", methods=["GET"])
 def players():
     if request.method == "GET":
