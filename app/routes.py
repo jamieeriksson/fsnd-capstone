@@ -260,7 +260,7 @@ def page_not_found(e):
 
 
 @app.errorhandler(405)
-def page_not_found(e):
+def method_not_allowed(e):
     return (
         jsonify(
             {"success": False, "error": 405, "message": "method not allowed"}
