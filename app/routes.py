@@ -6,9 +6,11 @@ from .auth.auth import AuthError, requires_auth
 
 ENTRIES_PER_PAGE = 20
 
+
 @app.route("/")
 def index():
-    return jsonify({'success': True}
+    return jsonify({"success": True})
+
 
 @app.route("/players", methods=["GET"])
 def players():

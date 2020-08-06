@@ -1,7 +1,7 @@
 from flask_script import Manager
 from flask_migrate import Migrate, MigrateCommand
 
-from .. import app
+from . import app
 
 manager = Manager(app)
 
