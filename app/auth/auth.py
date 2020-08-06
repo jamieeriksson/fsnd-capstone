@@ -1,4 +1,4 @@
-import os
+from os import getenv
 import json
 from flask import request
 from functools import wraps
@@ -6,9 +6,9 @@ from jose import jwt
 from urllib.request import urlopen
 
 
-AUTH0_DOMAIN = "dev-pfwmgsv1.us.auth0.com"
-ALGORITHMS = ["RS256"]
-API_AUDIENCE = "players-and-teams"
+AUTH0_DOMAIN = getenv("AUTH0_DOMAIN", None)
+ALGORITHMS = getenv("ALGORITHMS", None)
+API_AUDIENCE = getenv("API_AUDIENCE", None)
 
 
 class AuthError(Exception):

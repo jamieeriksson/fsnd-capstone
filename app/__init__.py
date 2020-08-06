@@ -8,7 +8,7 @@ import os
 def create_app(testing):
     # create and configure the app
     app = Flask(__name__, instance_relative_config=False)
-    app.config.from_object("config.DevConfig")
+    app.config.from_object("config.ProdConfig")
 
     if testing:
         app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_TEST_URI")

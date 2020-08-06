@@ -54,6 +54,254 @@ python wsgi.py
 This API is deployed on Heroku and can be visited at:
 https://fsnd-capstone-ultimate-teams.herokuapp.com/
 
+## API Behavior
+
+### Endpoints
+
+GET '/players',  
+POST '/players',  
+GET '/players/int:player_id',  
+PATCH '/players/int:player_id',  
+DELETE '/players/int:player_id',  
+GET '/teams',  
+POST '/teams',  
+GET '/teams/int:team_id',  
+PATCH '/teams/int:team_id',  
+DELETE '/teams/int:team_id',
+
+GET '/players'
+
+- Permissions: none
+- Fetches a paginated list of ultimate frisbee players.
+- Request Arguments: page number for pagination
+- Returns: An object stating a successful request, the total number of players in the database, and the list of objects of individual player details.
+
+  ```
+  {
+  "players": [
+    {
+      "gender": "F",
+      "id": 1,
+      "jersey_number": 15,
+      "name": "Doe Johnson",
+      "position": "Hybrid",
+      "team": "Whiplash"
+    },
+    {
+      "gender": "M",
+      "id": 2,
+      "jersey_number": 42,
+      "name": "John Smith",
+      "position": "Handler",
+      "team": "WOOF"
+    }
+  ],
+  "success": true,
+  "total_players": 2
+  }
+  ```
+
+POST '/players'
+
+- Permissions: create:players
+- Allows user to create a new ultimate frisbee player in the database.
+- Request Arguments: player name, gender, jersey number, position player plays, the team they are rostered on (optional)
+- Returns: An object stating a successful request and returning the information of the newly created player.
+  ```
+  {
+  "player": {
+      "gender": "F",
+      "id": 1,
+      "jersey_number": 15,
+      "name": "Doe Johnson",
+      "position": "Hybrid",
+      "team": "Whiplash"
+    },
+  "success": true
+  }
+  ```
+
+GET '/players/int:player_id'
+
+- Permissions: none
+- Retrieves information on an individual player by player id.
+- Request Arguments: player id
+- Returns: An object stating a successful request and returning the information of the desired player.
+  ```
+  {
+  "player": {
+      "gender": "F",
+      "id": 1,
+      "jersey_number": 15,
+      "name": "Doe Johnson",
+      "position": "Hybrid",
+      "team": "Whiplash"
+    },
+  "success": true
+  }
+  ```
+
+PATCH '/players/int:player_id'
+
+- Permissions: update:player
+- Allows user to update and change information about a specific player.
+- Request Arguments: player id, name, gender, jersey number, position player plays, and the team they are rostered on.
+- Returns: An object stating a successful request, the newly updated information of the desired player, and the previous information of the player.
+  ```
+  {
+  "new_player_info_": {
+      "gender": "F",
+      "id": 1,
+      "jersey_number": 15,
+      "name": "Doe Johnson",
+      "position": "Hybrid",
+      "team": "Whiplash"
+    },
+  "previous_player_info_": {
+      "gender": "F",
+      "id": 1,
+      "jersey_number": 4,
+      "name": "Doe Johnson",
+      "position": "Cutter",
+      "team": "Public Enemy"
+    },
+  "success": true
+  }
+  ```
+
+DELETE '/players/int:player_id'
+
+- Permissions: delete:player
+- Removes and deletes an individual player from the database by player id.
+- Request Arguments: player id
+- Returns: An object stating a successful request and the id of the player deleted.
+  ```
+  {
+  "deleted": 1
+  "success": true
+  }
+  ```
+
+GET '/teams'
+
+- Permissions: none
+- Fetches a paginated list of ultimate frisbee teams.
+- Request Arguments: page number for pagination
+- Returns: An object stating a successful request, the total number of teams in the database, and the list of objects of individual team details.
+
+  ```
+  {
+  "success": true,
+  "teams": [
+    {
+      "division": "Womens",
+      "id": 1,
+      "level": "College",
+      "location": "Richardson, Texas",
+      "name": "Whiplash",
+      "roster": [
+        "Doe Johnson"
+      ]
+    },
+    {
+      "division": "Open",
+      "id": 2,
+      "level": "College",
+      "location": "Richardson, Texas",
+      "name": "WOOF",
+      "roster": [
+        "John Smith"
+      ]
+    }
+  ],
+  "total_teams": 2
+  }
+  ```
+
+POST '/teams'
+
+- Permissions: create:teams
+- Allows user to create a new ultimate frisbee team in the database.
+- Request Arguments: team name, location, division, and level.
+- Returns: An object stating a successful request and returning the information of the newly created team.
+  ```
+  {
+  "team": {
+      "division": "Open",
+      "id": 2,
+      "level": "College",
+      "location": "Richardson, Texas",
+      "name": "WOOF",
+      "roster": []
+    }
+  "success": true
+  }
+  ```
+
+GET '/teams/int:team_id'
+
+- Permissions: none
+- Retrieves information on an individual team by team id.
+- Request Arguments: team id
+- Returns: An object stating a successful request and returning the information of the desired team.
+  ```
+  {
+  "team": {
+      "division": "Open",
+      "id": 2,
+      "level": "College",
+      "location": "Richardson, Texas",
+      "name": "WOOF",
+      "roster": []
+    }
+  "success": true
+  }
+  ```
+
+PATCH '/teams/int:team_id'
+
+- Permissions: update:team
+- Allows user to update and change information about a specific team.
+- Request Arguments: team id, team name, location, division, and level.
+- Returns: An object stating a successful request, the newly updated information of the desired team, and the previous information of the team.
+  ```
+  {
+  "new_team_info_": {
+      "division": "Open",
+      "id": 2,
+      "level": "College",
+      "location": "Richardson, Texas",
+      "name": "WOOF",
+      "roster": []
+    },
+  "previous_team_info_": {
+      "division": "Mixed",
+      "id": 2,
+      "level": "College",
+      "location": "Dallas, Texas",
+      "name": "WOOF",
+      "roster": [
+        "Doe Johnson",
+        "John Smith"
+      ]
+    },
+  "success": true
+  }
+  ```
+
+DELETE '/teams/int:team_id'
+
+- Permissions: delete:team
+- Removes and deletes an individual team from the database by team id.
+- Request Arguments: team id
+- Returns: An object stating a successful request and the id of the team deleted.
+  ```
+  {
+  "deleted": 1
+  "success": true
+  }
+  ```
+
 ## Authorization
 
 To log in or create an account for this application you can visit:

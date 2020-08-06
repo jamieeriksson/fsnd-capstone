@@ -1,6 +1,7 @@
 import unittest
 import json
 import os
+from os import getenv
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
@@ -15,13 +16,12 @@ class UltimatePlayersTestCase(unittest.TestCase):
 
         self.app = create_app(True)
 
-        self.admin_jwt = os.getenv("ADMIN_TOKEN")
         self.team_manager_jwt = os.getenv("TEAM_MANAGER_TOKEN")
         self.client = self.app.test_client
 
-        self.admin_headers = {"Authorization": f'Bearer {os.getenv("ADMIN_TOKEN")}'}
+        self.admin_headers = {"Authorization": f"Bearer {getenv('ADMIN_TOKEN', None)}"}
         self.team_manager_headers = {
-            "Authorization": f'Bearer {os.getenv("TEAM_MANAGER_TOKEN")}'
+            "Authorization": f"Bearer {getenv('TEAM_MANAGER_TOKEN', None)}"
         }
 
         # Variables for player endpoint tests
