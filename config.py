@@ -32,4 +32,3 @@ class DevConfig(Config):
     ENV = "development"
     DEBUG = True
     TESTING = True
-

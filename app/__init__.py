@@ -23,4 +23,3 @@ def create_app(testing):
         populate_db()
 
         return app
-

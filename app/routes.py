@@ -9,18 +9,16 @@ ENTRIES_PER_PAGE = 20
 
 @app.route("/")
 def index():
-    return jsonify(
-        {
-            "message": "Visit the /players or /teams routes to see player and team details!"
-        }
-    )
+    return jsonify({"message": "Visit the /players or /teams routes!"})
 
 
 @app.route("/players", methods=["GET"])
 def players():
     if request.method == "GET":
         page = request.args.get("page", 1, type=int)
-        player_query = Player.query.paginate(page=page, per_page=ENTRIES_PER_PAGE)
+        player_query = Player.query.paginate(
+            page=page, per_page=ENTRIES_PER_PAGE
+        )
         players_total = player_query.total
 
         if players_total == 0 or player_query == 0:
@@ -29,7 +27,11 @@ def players():
         players = [player.format() for player in player_query.items]
 
         return jsonify(
-            {"success": True, "total_players": players_total, "players": players}
+            {
+                "success": True,
+                "total_players": players_total,
+                "players": players,
+            }
         )
     else:
         abort(405)
@@ -46,7 +48,11 @@ def new_player(jwt):
             jersey_number = body.get("jersey_number")
             position = body.get("position")
             team_id = body.get("team_id", None)
-            team = Team.query.filter_by(id=team_id).one_or_none() if team_id else None
+            team = (
+                Team.query.filter_by(id=team_id).one_or_none()
+                if team_id
+                else None
+            )
 
             new_player = Player(
                 name=name,
@@ -95,7 +101,9 @@ def update_player_details(jwt, player_id):
         team_id = body.get("team_id", None)
         try:
             player.team = (
-                Team.query.filter_by(id=team_id).one_or_none() if team_id else None
+                Team.query.filter_by(id=team_id).one_or_none()
+                if team_id
+                else None
             )
 
             player.update()
@@ -145,7 +153,9 @@ def teams():
 
         teams = [team.format() for team in team_query.items]
 
-        return jsonify({"success": True, "total_teams": teams_total, "teams": teams})
+        return jsonify(
+            {"success": True, "total_teams": teams_total, "teams": teams}
+        )
 
     else:
         abort(405)
@@ -242,7 +252,9 @@ def delete_team(jwt, team_id):
 @app.errorhandler(404)
 def page_not_found(e):
     return (
-        jsonify({"success": False, "error": 404, "message": "resource not found"}),
+        jsonify(
+            {"success": False, "error": 404, "message": "resource not found"}
+        ),
         404,
     )
 
@@ -250,14 +262,19 @@ def page_not_found(e):
 @app.errorhandler(405)
 def page_not_found(e):
     return (
-        jsonify({"success": False, "error": 405, "message": "method not allowed"}),
+        jsonify(
+            {"success": False, "error": 405, "message": "method not allowed"}
+        ),
         405,
     )
 
 
 @app.errorhandler(422)
 def unprocessable(error):
-    return (jsonify({"success": False, "error": 422, "message": "unprocessable"}), 422)
+    return (
+        jsonify({"success": False, "error": 422, "message": "unprocessable"}),
+        422,
+    )
 
 
 @app.errorhandler(AuthError)

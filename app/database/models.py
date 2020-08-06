@@ -25,7 +25,10 @@ def populate_db():
         level="College",
     )
     mens_team = Team(
-        name="WOOF", location="Richardson, Texas", division="Open", level="College"
+        name="WOOF",
+        location="Richardson, Texas",
+        division="Open",
+        level="College",
     )
     womens_team.insert()
     mens_team.insert()
@@ -126,4 +129,3 @@ class Team(db.Model):
     def delete(self):
         db.session.delete(self)
         db.session.commit()
-

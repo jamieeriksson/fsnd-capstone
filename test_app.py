@@ -20,7 +20,9 @@ class UltimatePlayersTestCase(unittest.TestCase):
         self.client = self.app.test_client
 
         self.admin_headers = {"Authorization": f"Bearer {self.admin_jwt}"}
-        self.team_manager_headers = {"Authorization": f"Bearer {self.team_manager_jwt}"}
+        self.team_manager_headers = {
+            "Authorization": f"Bearer {self.team_manager_jwt}"
+        }
 
         # Variables for player endpoint tests
         self.player_name = "Doe Johnson"
@@ -70,7 +72,10 @@ class UltimatePlayersTestCase(unittest.TestCase):
         def populate_db():
             db.create_all()
             new_team = Team(
-                name="Teamify", location="Texas", division="Womens", level="Club",
+                name="Teamify",
+                location="Texas",
+                division="Womens",
+                level="Club",
             )
             new_team.insert()
             new_player = Player(
@@ -130,7 +135,9 @@ class UltimatePlayersTestCase(unittest.TestCase):
             "/players", json=self.new_player, headers=self.admin_headers
         )
         response2 = self.client().post(
-            "/players", json=self.new_player_no_team, headers=self.admin_headers
+            "/players",
+            json=self.new_player_no_team,
+            headers=self.admin_headers,
         )
         data = json.loads(response.data)
         data2 = json.loads(response2.data)
@@ -144,7 +151,9 @@ class UltimatePlayersTestCase(unittest.TestCase):
 
     def test_422_if_create_player_malformed_data(self):
         response = self.client().post(
-            "/players", json={"not_a_key": "bad data"}, headers=self.admin_headers
+            "/players",
+            json={"not_a_key": "bad data"},
+            headers=self.admin_headers,
         )
         data = json.loads(response.data)
 
@@ -173,7 +182,9 @@ class UltimatePlayersTestCase(unittest.TestCase):
     def test_update_player(self):
         player = Player.query.filter_by(name=self.player_name).first()
         response = self.client().patch(
-            f"/players/{player.id}", json=self.update_player, headers=self.admin_headers
+            f"/players/{player.id}",
+            json=self.update_player,
+            headers=self.admin_headers,
         )
         data = json.loads(response.data)
 
@@ -197,7 +208,9 @@ class UltimatePlayersTestCase(unittest.TestCase):
 
     def test_404_if_update_player_not_found_by_id(self):
         response = self.client().patch(
-            "/players/1000", json=self.update_player, headers=self.admin_headers
+            "/players/1000",
+            json=self.update_player,
+            headers=self.admin_headers,
         )
         data = json.loads(response.data)
 
@@ -220,7 +233,9 @@ class UltimatePlayersTestCase(unittest.TestCase):
 
     def test_401_regular_user_cannot_update_player(self):
         player = Player.query.filter_by(name=self.player_name).first()
-        response = self.client().patch(f"/players/{player.id}", json=self.update_player)
+        response = self.client().patch(
+            f"/players/{player.id}", json=self.update_player
+        )
         data = json.loads(response.data)
 
         self.assertEqual(response.status_code, 401)
@@ -228,7 +243,9 @@ class UltimatePlayersTestCase(unittest.TestCase):
         self.assertEqual(data["message"], "Header Not Present")
 
     def test_delete_player_by_id(self):
-        response = self.client().delete("/players/1", headers=self.admin_headers)
+        response = self.client().delete(
+            "/players/1", headers=self.admin_headers
+        )
         data = json.loads(response.data)
 
         self.assertEqual(response.status_code, 200)
@@ -236,7 +253,9 @@ class UltimatePlayersTestCase(unittest.TestCase):
         self.assertEqual(data["deleted"], 1)
 
     def test_404_if_delete_player_id_not_found(self):
-        response = self.client().delete("/players/1000", headers=self.admin_headers)
+        response = self.client().delete(
+            "/players/1000", headers=self.admin_headers
+        )
         data = json.loads(response.data)
 
         self.assertEqual(response.status_code, 404)
@@ -311,7 +330,9 @@ class UltimatePlayersTestCase(unittest.TestCase):
 
     def test_422_if_create_team_malformed_data(self):
         response = self.client().post(
-            "/teams", json={"not_a_key": "bad data"}, headers=self.admin_headers
+            "/teams",
+            json={"not_a_key": "bad data"},
+            headers=self.admin_headers,
         )
         data = json.loads(response.data)
 
@@ -340,7 +361,9 @@ class UltimatePlayersTestCase(unittest.TestCase):
     def test_update_team(self):
         team = Team.query.filter_by(name=self.team_name).first()
         response = self.client().patch(
-            f"/teams/{team.id}", json=self.update_team, headers=self.admin_headers
+            f"/teams/{team.id}",
+            json=self.update_team,
+            headers=self.admin_headers,
         )
         data = json.loads(response.data)
 
@@ -387,7 +410,9 @@ class UltimatePlayersTestCase(unittest.TestCase):
 
     def test_401_regular_user_cannot_update_team(self):
         team = Team.query.filter_by(name=self.team_name).first()
-        response = self.client().patch(f"/teams/{team.id}", json=self.update_team)
+        response = self.client().patch(
+            f"/teams/{team.id}", json=self.update_team
+        )
         data = json.loads(response.data)
 
         self.assertEqual(response.status_code, 401)
@@ -403,7 +428,9 @@ class UltimatePlayersTestCase(unittest.TestCase):
         self.assertEqual(data["deleted"], 1)
 
     def test_404_if_delete_team_id_not_found(self):
-        response = self.client().delete("/teams/1000", headers=self.admin_headers)
+        response = self.client().delete(
+            "/teams/1000", headers=self.admin_headers
+        )
         data = json.loads(response.data)
 
         self.assertEqual(response.status_code, 404)
