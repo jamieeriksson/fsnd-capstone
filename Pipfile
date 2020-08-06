@@ -7,7 +7,6 @@ verify_ssl = true
 ptpython = "*"
 pylint = "*"
 black = "==19.10b0"
-python-dotenv = "*"
 
 [packages]
 gunicorn = "*"
@@ -19,6 +18,7 @@ flask-sqlalchemy = "*"
 flask-wtf = "*"
 flask-cors = "*"
 python-jose = "*"
+python-dotenv = "*"
 
 [requires]
 python_version = "3.8"
